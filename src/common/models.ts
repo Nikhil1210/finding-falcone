@@ -24,3 +24,14 @@ export  interface ResultRequest {
     planet_names: string[];
     vehicle_names: string[];
 }
+
+export interface Result {
+    status: string;
+    planet_name: string;
+    time_taken: number;
+}
+
+export interface GameDispatch {
+    PublishResult?: (data: Result) => {};
+    ResetGame?: () => {};
+}

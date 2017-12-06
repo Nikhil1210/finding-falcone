@@ -1,15 +1,20 @@
 import * as React from 'react';
 import PlanetForm from '../components/PlanetForm';
-import { Destination, Planet, Vehicle, ResultRequest } from '../common/models';
-import { GetPlanets, GetVehicles, Result, Token } from '../common/Service/DataService';
+import { Destination, Planet, Vehicle, ResultRequest, Result, GameDispatch } from '../common/models';
+import { GetPlanets, GetVehicles, Token, GameResult } from '../common/Service/DataService';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import * as Redux from 'redux';
+import { PublishResult } from '../Actions/gameActions';
+import { GameReducer } from '../Reducers/index';
+import { GameState } from '../Reducers/gameReducer';
+
 export interface AppState {
   destinations: Destination[];
   planets: Planet[];
   vehicles: Vehicle[];
 }
-class FindFalcon extends React.Component < {},
-AppState > {
+class FindFalcon extends React.Component < GameDispatch, AppState > {
   constructor(props: any) {
     super(props);
     this.state = {
@@ -68,8 +73,12 @@ AppState > {
     });
     Token().then((token: string) => {
       req.token = token;
-      return Result(req);
-    }).then((result: any) => console.log(result));
+      return GameResult(req);
+    }).then((result: Result) => {
+       debugger; 
+       console.log(result);
+      //  this.props.PublishResult(result as Result); 
+    });
   }
 
   render() {
@@ -94,9 +103,19 @@ AppState > {
           <button onClick={this.SubmitResults}> 
           <Link to="/result">Find Falcone</Link>
           </button>
-      </div>
+      </    div>
     );
   }
 }
 
-export default FindFalcon;
+function mapStateToProps(state: GameState, ownProps: {} ): any {
+  return state ;
+}
+
+function mapDispatchToProps(dispatch: Redux.Dispatch<GameReducer>): GameDispatch {
+  return {
+    PublishResult: (data: Result) => dispatch(PublishResult(data))
+   };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FindFalcon);

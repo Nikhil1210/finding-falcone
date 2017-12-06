@@ -12,7 +12,7 @@ export async function GetVehicles(): Promise<Vehicle[]> {
     return data;
  }
 
-export async function Result(req: ResultRequest): Promise<{}> {
+export async function GameResult(req: ResultRequest): Promise<{}> {
     let response  = await fetch('https://findfalcone.herokuapp.com/find', 
                                 { 
                                     headers: {
