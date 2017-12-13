@@ -10,12 +10,14 @@ import { AppState } from '../Reducers/InitialState';
 
 export interface FindFalconState {
   destinations: Destination[];
+  FindBtnEnable: boolean;
 }
 class FindFalcon extends React.Component < GameDispatch & AppState, FindFalconState > {
   constructor(props: any) {
     super(props);
     this.state = {
-      destinations: []
+      destinations: [],
+      FindBtnEnable: false
     };
     for (let i = 1; i < 5; i++) {
       this.state.destinations.push({name: `Destination${i}`, 
@@ -37,7 +39,10 @@ class FindFalcon extends React.Component < GameDispatch & AppState, FindFalconSt
       let plt = this.props.planets.filter((x: Planet) => x.distance === +evt.target.value); 
       newDestinations[idx].planet =  plt[0];
     }
-    this.setState({destinations: newDestinations});    
+
+    let emptyDest = this.state.destinations.find(x => x.vehicle.name === '');
+    debugger;
+    this.setState({destinations: newDestinations, FindBtnEnable: emptyDest === undefined ? true : false});    
     // let idx = this.state.destinations.findIndex(x => x.name === evt.target.name);
     // if (evt.target.type === 'radio') {
     //   newDestinations[idx].vehicle = this.props.vehicles.find(x => x.name === evt.target.value) as Vehicle;
@@ -83,7 +88,7 @@ class FindFalcon extends React.Component < GameDispatch & AppState, FindFalconSt
               onChange={this.onChange}/>
           })}
           </div>
-          <button onClick={this.SubmitResults}> 
+          <button onClick={this.SubmitResults} disabled={!this.state.FindBtnEnable}> 
           <Link to="/result">Find Falcone</Link>
           </button>
       </    div>
