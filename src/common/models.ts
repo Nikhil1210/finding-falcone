@@ -32,6 +32,13 @@ export interface Result {
 }
 
 export interface GameDispatch {
+    FindFalconeResults?: (data: ResultRequest) => {};
     PublishResult?: (data: Result) => {};
     ResetGame?: () => {};
+}
+
+export interface GameState {
+    planet_name: string;
+    status: string;
+    time_taken: number; 
 }

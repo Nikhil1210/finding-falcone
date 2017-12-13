@@ -1,68 +1,57 @@
 import * as React from 'react';
 import PlanetForm from '../components/PlanetForm';
-import { Destination, Planet, Vehicle, ResultRequest, Result, GameDispatch } from '../common/models';
-import { GetPlanets, GetVehicles, Token, GameResult } from '../common/Service/DataService';
+import { Destination, ResultRequest, GameDispatch, Planet, Vehicle } from '../common/models';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as Redux from 'redux';
-import { PublishResult } from '../Actions/gameActions';
+import { FindFalconeResults } from '../Actions/gameActions';
 import { GameReducer } from '../Reducers/index';
-import { GameState } from '../Reducers/gameReducer';
+import { AppState } from '../Reducers/InitialState';
 
-export interface AppState {
+export interface FindFalconState {
   destinations: Destination[];
-  planets: Planet[];
-  vehicles: Vehicle[];
 }
-class FindFalcon extends React.Component < GameDispatch, AppState > {
+class FindFalcon extends React.Component < GameDispatch & AppState, FindFalconState > {
   constructor(props: any) {
     super(props);
     this.state = {
-      destinations: [],
-      planets: [],
-      vehicles: []
+      destinations: []
     };
     for (let i = 1; i < 5; i++) {
-      this
-        .state
-        .destinations
-        .push({name: `Destination${i}`, 
-        planet: {name: '', distance: 0},
-        vehicle: { name: '', max_distance: 0, speed: 0, total_no: 0}});
-    }
+      this.state.destinations.push({name: `Destination${i}`, 
+            planet: {name: '', distance: 0},
+            vehicle: { name: '', max_distance: 0, speed: 0, total_no: 0}});
+        }
     this.onChange = this.onChange.bind(this);
     this.SubmitResults = this.SubmitResults.bind(this);
   }
- 
-  componentDidMount() {
-    GetPlanets().then((data: Planet[]) => this.setState({planets: data}))
-    // tslint:disable-next-line:no-console
-    .catch((err: Error) => console.log('error while fetching planets'));
-
-    GetVehicles().then((data: Vehicle[]) => this.setState({vehicles: data}))
-    // tslint:disable-next-line:no-console
-    .catch((err: Error) => console.log('error while fetching vehicles'));
-  }
 
   onChange(evt: any): void {
-    // debugger;
-    let idx = this.state.destinations.findIndex(x => x.name === evt.target.name);
     const newDestinations = [...this.state.destinations];
-    const newVehicles = [...this.state.vehicles];
+    let idx = this.state.destinations.findIndex(x => x.name === evt.target.name);
+    
     if (evt.target.type === 'radio') {
-      newDestinations[idx].vehicle = this.state.vehicles.find(x => x.name === evt.target.value) as Vehicle;
-      // reduce count of the vehicle
-      newDestinations.forEach(element => {
-        if (element.vehicle.name !== '') {
-          // debugger;
-          let idxVehicle = newVehicles.findIndex(x => x.name === evt.target.value);
-          newVehicles[idxVehicle].total_no -= 1;
-        }
-      });
-    } else  {
-      newDestinations[idx].planet = this.state.planets.find(x => x.distance === +evt.target.value) as Planet;     
+      let plt =  this.props.vehicles.filter((x: Vehicle) => x.name === evt.target.value);
+      newDestinations[idx].vehicle =  plt[0];
+    } else {
+      let plt = this.props.planets.filter((x: Planet) => x.distance === +evt.target.value); 
+      newDestinations[idx].planet =  plt[0];
     }
-    this.setState({destinations: newDestinations, vehicles: newVehicles});
+    this.setState({destinations: newDestinations});    
+    // let idx = this.state.destinations.findIndex(x => x.name === evt.target.name);
+    // if (evt.target.type === 'radio') {
+    //   newDestinations[idx].vehicle = this.props.vehicles.find(x => x.name === evt.target.value) as Vehicle;
+      // reduce count of the vehicle
+      // newDestinations.forEach(element => {
+      //   if (element.vehicle.name !== '') {
+      //     // debugger;
+      //     let idxVehicle = this.props.vehicles.findIndex(x => x.name === evt.target.value);
+      //     this.props.vehicles[idxVehicle].total_no -= 1;
+      //   }
+      // });
+    // } else  {
+    //   newDestinations[idx].planet = this.state.planets.find(x => x.distance === +evt.target.value) as Planet;     
+    // }
   }
 
   SubmitResults() {
@@ -71,17 +60,11 @@ class FindFalcon extends React.Component < GameDispatch, AppState > {
       req.planet_names.push(x.planet.name);
       req.vehicle_names.push(x.vehicle.name);
     });
-    Token().then((token: string) => {
-      req.token = token;
-      return GameResult(req);
-    }).then((result: Result) => {
-       debugger; 
-       console.log(result);
-      //  this.props.PublishResult(result as Result); 
-    });
+    this.props.FindFalconeResults!(req);
   }
 
   render() {
+    const {planets, vehicles} = this.props;
     return (
       <div className="App">
         <h4>Select planets you want to search in:
@@ -95,8 +78,8 @@ class FindFalcon extends React.Component < GameDispatch, AppState > {
               key={idx}
               name={item.name}
               destination={item}
-              planets={this.state.planets}
-              vehicles={this.state.vehicles}
+              planets={planets}
+              vehicles={vehicles}
               onChange={this.onChange}/>
           })}
           </div>
@@ -108,13 +91,13 @@ class FindFalcon extends React.Component < GameDispatch, AppState > {
   }
 }
 
-function mapStateToProps(state: GameState, ownProps: {} ): any {
+function mapStateToProps(state: AppState, ownProps: {} ): AppState {
   return state ;
 }
 
 function mapDispatchToProps(dispatch: Redux.Dispatch<GameReducer>): GameDispatch {
   return {
-    PublishResult: (data: Result) => dispatch(PublishResult(data))
+    FindFalconeResults: (data: ResultRequest) => dispatch(FindFalconeResults(data))
    };
 }
 

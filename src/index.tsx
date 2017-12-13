@@ -5,10 +5,15 @@ import { BrowserRouter } from 'react-router-dom';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import { reducers, GameReducer } from './Reducers/index';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-
-const store = createStore <GameReducer> (reducers);
+import thunk from 'redux-thunk';
+import { initialAppState } from './Reducers/InitialState';
+import { loadPlanets } from './Actions/planetActions';
+import { loadVehicles } from './Actions/vehicleActions';
+const store = createStore <GameReducer> (reducers, initialAppState, applyMiddleware(thunk) );
+store.dispatch(loadPlanets());
+store.dispatch(loadVehicles());
 
 ReactDOM.render(
   <Provider store={store}>

@@ -19,10 +19,10 @@ const RadioInput = ({
   return (
     <div className="radio" onChange={onChange} 
       style={{display: 'flex', flexDirection: 'column', justifyContent: 'flex-start'}}>
-      {options.map((option) => {
+      {options.map((opt) => {
         return (
-            <label key={option.name}>
-              <input type="radio" value={option.name} name={name} />{option.name} ({option.total_no})
+            <label key={opt.name}>
+              <input type="radio" value={opt.name} name={name} />{opt.name} ({opt.total_no})
             </label>
         );
       })}

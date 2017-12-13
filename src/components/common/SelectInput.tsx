@@ -18,16 +18,16 @@ const SelectInput = ({
   value,
   options
 }: SelectProps) => {
-  return (
+   return (
     <div >
       <label htmlFor={name}>{label}</label>
       <div className="field">
         <select name={name} value={value} onChange={onChange} className="form-control">
           <option value="">{defaultOption}</option>
-          {options.map((option) => {
-            return <option key={option.distance} value={option.distance}>{option.name}</option>;
+          {options.map((opt) => {
+            return <option key={opt.distance} value={opt.distance}>{opt.name}</option>;
           })
-}
+          }
         </select>
       </div>
     </div>

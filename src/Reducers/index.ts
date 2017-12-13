@@ -1,10 +1,17 @@
 import { combineReducers } from 'redux';
-import { GameState, game } from './gameReducer';
+import result  from './ResultReducer';
+import planets  from './PlanetReducer';
+import vehicles  from './VehicleReducer';
+import { Planet, Vehicle, GameState } from '../common/models';
 
 export interface GameReducer {
-    game: GameState;
+    result: GameState;
+    planets: Planet[];
+    vehicles: Vehicle[];
 }
 
-export const reducers = combineReducers < GameReducer > ({
-    game
+export const reducers = combineReducers <GameReducer> ({
+    result,
+    planets,
+    vehicles
 });

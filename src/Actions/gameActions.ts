@@ -1,14 +1,19 @@
-import { Result } from '../common/models';
+import { Result, ResultRequest } from '../common/models';
+import { PUBLISH_RESULT, RESET_GAME, AppAction } from './Actions';
+import { Token, GameResult } from '../common/Service/DataService';
 
-export type GameAction = {
-    type: '@@APP/PUBLISH_RESULT',
-    data: Result
-} |{
-    type: '@@APP/RESET_GAME'
+export const FindFalconeResults = (data: ResultRequest) => {
+    return (dispatch: any) => {
+        return Token().then((token: string) => {
+              data.token = token;
+              return GameResult(data);
+            }).catch(error => 
+                // tslint:disable-next-line:no-console
+                (console.error(`Error while fetching token`, error)))
+            .then((result: Result) => {
+                PublishResult(result); 
+            });
+    };
 };
-
-export const PUBLISH_RESULT = '@@APP/PUBLISH_RESULT';
-export const RESET_GAME = '@@APP/RESET_GAME';
-
-export const PublishResult = (data: Result): GameAction => ({type: PUBLISH_RESULT, data});
-export const ResetGame = (): GameAction => ({type: RESET_GAME});
+export const PublishResult = (data: Result): AppAction => ({type: PUBLISH_RESULT, data});
+export const ResetGame = (): AppAction => ({type: RESET_GAME});
