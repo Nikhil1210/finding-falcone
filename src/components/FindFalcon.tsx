@@ -39,24 +39,10 @@ class FindFalcon extends React.Component < GameDispatch & AppState, FindFalconSt
       let plt = this.props.planets.filter((x: Planet) => x.distance === +evt.target.value); 
       newDestinations[idx].planet =  plt[0];
     }
-
-    let emptyDest = this.state.destinations.find(x => x.vehicle.name === '');
-    debugger;
-    this.setState({destinations: newDestinations, FindBtnEnable: emptyDest === undefined ? true : false});    
-    // let idx = this.state.destinations.findIndex(x => x.name === evt.target.name);
-    // if (evt.target.type === 'radio') {
-    //   newDestinations[idx].vehicle = this.props.vehicles.find(x => x.name === evt.target.value) as Vehicle;
-      // reduce count of the vehicle
-      // newDestinations.forEach(element => {
-      //   if (element.vehicle.name !== '') {
-      //     // debugger;
-      //     let idxVehicle = this.props.vehicles.findIndex(x => x.name === evt.target.value);
-      //     this.props.vehicles[idxVehicle].total_no -= 1;
-      //   }
-      // });
-    // } else  {
-    //   newDestinations[idx].planet = this.state.planets.find(x => x.distance === +evt.target.value) as Planet;     
-    // }
+    this.setState({
+        destinations: newDestinations,
+        FindBtnEnable: this.state.destinations.find(x => x.vehicle.name === '') === undefined ? true : false
+      });
   }
 
   SubmitResults() {
